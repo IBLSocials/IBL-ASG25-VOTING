@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>2025 IBL All-Star Fan Vote</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 800px; margin: auto; }
+    h1 { text-align: center; }
+    form { display: none; }
+    #logoutBtn { display: none; margin-bottom: 10px; }
+    label { display: block; margin-top: 10px; }
+    select, input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 8px; margin-top: 5px;
+    }
+    button { margin-top: 15px; padding: 10px 15px; }
+  </style>
+</head>
+<body>
+  <h1>2025 IBL All-Star Fan Vote</h1>
+
+  <div id="authSection">
+    <p>Enter your email to vote:</p>
+    <input type="email" id="email" placeholder="you@example.com">
+    <input type="password" id="password" placeholder="Create a password">
+    <button onclick="signIn()">Login / Register</button>
+  </div>
+
+  <button id="logoutBtn" onclick="logout()">Logout</button>
+
+  <form id="voteForm">
+    <h2>Vote Ballot</h2>
+
+    <label>South Catcher:
+      <select id="southCatcher" required>
+        <option value="">-- Select --</option>
+        <option>Player A (Welland)</option>
+        <option>Player B (London)</option>
+      </select>
+    </label>
+
+    <label>North Catcher:
+      <select id="northCatcher" required>
+        <option value="">-- Select --</option>
+        <option>Player E (Toronto)</option>
+        <option>Player F (Barrie)</option>
+      </select>
+    </label>
+
+    <button type="submit">Submit My Vote</button>
+    <p id="voteStatus" style="color: green; display:none;">✅ Your vote was submitted!</p>
+    <p id="alreadyVoted" style="color: red; display:none;">❌ You have already voted with this email.</p>
+  </form>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNCxKY3DwggCD4wiIqOpOh0MN259_4I_E",
+      authDomain: "ibl-asg-fanvote-25.firebaseapp.com",
+      projectId: "ibl-asg-fanvote-25",
+      storageBucket: "ibl-asg-fanvote-25.firebasestorage.app",
+      messagingSenderId: "231424422226",
+      appId: "1:231424422226:web:502de62985b2f85ebbca8b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Sign in or register user
+    function signIn() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => showForm())
+        .catch(() => {
+          auth.createUserWithEmailAndPassword(email, password)
+            .then(() => showForm())
+            .catch(err => alert("Login failed: " + err.message));
+        });
+    }
+
+    // Show form after login
+    function showForm() {
+      document.getElementById("authSection").style.display = "none";
+      document.getElementById("voteForm").style.display = "block";
+      document.getElementById("logoutBtn").style.display = "inline-block";
+      checkIfAlreadyVoted();
+    }
+
+    // Sign out
+    function logout() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    // Check if this user already voted
+    function checkIfAlreadyVoted() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      db.collection("votes").doc(user.uid).get().then(doc => {
+        if (doc.exists) {
+          document.getElementById("voteForm").style.display = "none";
+          document.getElementById("alreadyVoted").style.display = "block";
+        }
+      });
+    }
+
+    // Handle form submit
+    document.getElementById("voteForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const voteData = {
+        email: user.email,
+        timestamp: new Date(),
+        southCatcher: document.getElementById("southCatcher").value,
+        northCatcher: document.getElementById("northCatcher").value
+      };
+
+      db.collection("votes").doc(user.uid).set(voteData).then(() => {
+        document.getElementById("voteStatus").style.display = "block";
+        document.getElementById("voteForm").reset();
+      });
+    });
+
+    // Show form if already logged in
+    auth.onAuthStateChanged(user => {
+      if (user) showForm();
+    });
+  </script>
+</body>
+</html>
 
