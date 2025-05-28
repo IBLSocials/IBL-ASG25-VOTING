@@ -1,10 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>IBL All-Star Voting</title>
+  <title>2025 IBL All-Star Vote</title>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    h1 { text-align: center; }
+    section { margin-bottom: 30px; }
+    label { display: block; margin-top: 10px; }
+    select, input[type="text"] { width: 100%; padding: 8px; }
+  </style>
 </head>
 <body>
-  <h1>Welcome to the IBL 2025 All-Star Vote!</h1>
-  <p>The fan vote opens June 23rd.</p>
+  <h1>2025 IBL All-Star Vote</h1>
+  <p><strong>Pick one player per position group for each team (North & South).</strong></p>
+
+  <form id="voteForm">
+    <section>
+      <h2>🧭 South Team</h2>
+      <label>Catcher:
+        <select required>
+          <option value="">-- Select --</option>
+          <option>Player A (Welland)</option>
+          <option>Player B (London)</option>
+          <option>Write-in</option>
+        </select>
+      </label>
+
+      <label>First Base:
+        <select required>
+          <option value="">-- Select --</option>
+          <option>Player C (Chatham-Kent)</option>
+          <option>Player D (Brantford)</option>
+          <option>Write-in</option>
+        </select>
+      </label>
+
+      <!-- Add other positions in the same way -->
+    </section>
+
+    <section>
+      <h2>🧭 North Team</h2>
+      <label>Catcher:
+        <select required>
+          <option value="">-- Select --</option>
+          <option>Player E (Guelph)</option>
+          <option>Player F (Toronto)</option>
+          <option>Write-in</option>
+        </select>
+      </label>
+
+      <label>First Base:
+        <select required>
+          <option value="">-- Select --</option>
+          <option>Player G (Barrie)</option>
+          <option>Player H (Hamilton)</option>
+          <option>Write-in</option>
+        </select>
+      </label>
+
+      <!-- Add other positions here too -->
+    </section>
+
+    <label>Email Address (required to submit vote):
+      <input type="email" required placeholder="your@email.com">
+    </label>
+
+    <br>
+    <button type="submit">Submit My Vote</button>
+  </form>
+
+  <p id="confirmation" style="display:none; color: green;">✅ Your vote has been submitted!</p>
+
+  <script>
+    document.getElementById("voteForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      // TEMP: Display confirmation (this will save to Firebase later)
+      document.getElementById("confirmation").style.display = "block";
+    });
+  </script>
 </body>
 </html>
