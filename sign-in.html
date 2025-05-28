@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Signing You In...</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+  <p>Signing you in, please wait...</p>
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNCxKY3DwggCD4wiIqOpOh0MN259_4I_E",
+      authDomain: "ibl-asg-fanvote-25.firebaseapp.com",
+      projectId: "ibl-asg-fanvote-25",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Handle sign-in with email link
+    if (auth.isSignInWithEmailLink(window.location.href)) {
+      let email = window.localStorage.getItem('emailForSignIn');
+      if (!email) {
+        email = window.prompt('Please provide your email for confirmation');
+      }
+
+      auth.signInWithEmailLink(email, window.location.href)
+        .then(() => {
+          window.localStorage.removeItem('emailForSignIn');
+          // Redirect to thank you page
+          window.location.href = 'thankyou.html';
+        })
+        .catch((error) => {
+          console.error('Error signing in:', error);
+          alert('Sign-in failed. Please try again.');
+        });
+    } else {
+      document.body.innerHTML = '<p>Invalid sign-in link.</p>';
+    }
+  </script>
+</body>
+</html>
